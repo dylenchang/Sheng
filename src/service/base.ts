@@ -8,7 +8,7 @@ const ContentType = {
   stream: "text/event-stream",
   form: "application/x-www-form-urlencoded; charset=UTF-8",
   download: "application/octet-stream", // for download
-  multiForm: "multipart/form-data", // for upload
+  upload: "multipart/form-data", // for upload
 };
 
 const baseOptions = {
@@ -60,11 +60,11 @@ const baseFetch = <T>(
   url: string,
   fetchOptions: FetchOptionType,
   {
-    form = false,
     isPublicAPI = false,
     bodyStringify = true,
     needAllResponseContent,
     deleteContentType,
+    getAbortController,
   }: IOtherOptions
 ): Promise<T> => {
   const options: typeof baseOptions & FetchOptionType = Object.assign(
@@ -72,6 +72,11 @@ const baseFetch = <T>(
     baseOptions,
     fetchOptions
   );
+  if (getAbortController) {
+    const abortController = new AbortController();
+    getAbortController(abortController);
+    options.signal = abortController.signal;
+  }
   if (isPublicAPI) {
     const sharedToken = globalThis.location.pathname.split("/").slice(-1)[0];
     const accessToken =
@@ -92,8 +97,11 @@ const baseFetch = <T>(
   if (deleteContentType) {
     options.headers.delete("Content-Type");
   } else {
+    debugger;
     const contentType = options.headers.get("Content-Type");
-    if (!contentType) options.headers.set("Content-Type", ContentType.json);
+    if (!contentType) {
+      options.headers.set("Content-Type", ContentType.json);
+    }
   }
 
   const urlPrefix = isPublicAPI ? PUBLIC_API_PREFIX : API_PREFIX;
@@ -113,11 +121,8 @@ const baseFetch = <T>(
     delete options.params;
   }
 
-  if (method === "POST" && form && params) {
-    const data = new FormData();
-    Object.keys(params).forEach((key) => data.append(key, params[key]));
-    options.body = data;
-  } else if (body && bodyStringify) options.body = JSON.stringify(body);
+  if (body && bodyStringify) options.body = JSON.stringify(body);
+
   // Handle timeout
   return Promise.race([
     new Promise((resolve, reject) => {
@@ -144,7 +149,18 @@ const baseFetch = <T>(
                 const loginUrl = `${globalThis.location.origin}/signin`;
                 bodyJson
                   .then((data: ResponseError) => {
-                    if (data.code === "not_setup" && IS_CE_EDITION)
+                    if (data.code === "init_validate_failed" && IS_CE_EDITION)
+                      Toast.notify({
+                        type: "error",
+                        message: data.message,
+                        duration: 4000,
+                      });
+                    else if (
+                      data.code === "not_init_validated" &&
+                      IS_CE_EDITION
+                    )
+                      globalThis.location.href = `${globalThis.location.origin}/init`;
+                    else if (data.code === "not_setup" && IS_CE_EDITION)
                       globalThis.location.href = `${globalThis.location.origin}/install`;
                     else if (location.pathname !== "/signin" || !IS_CE_EDITION)
                       globalThis.location.href = loginUrl;

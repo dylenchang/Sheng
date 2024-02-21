@@ -81,12 +81,12 @@ const NormalForm = () => {
       setIsLoading(true);
       const res = await login({
         url: "/login",
-        params: {
+        body: {
           email,
           password,
         },
       });
-      localStorage.setItem("console_token", res.data);
+      localStorage.setItem("console_token", res.data.token);
       router.replace("/apps");
     } finally {
       setIsLoading(false);
