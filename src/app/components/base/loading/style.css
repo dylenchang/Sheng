@@ -1,0 +1,32 @@
+.hash-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.hash-box {
+  width: 4vw;
+  height: 4vw;
+  background-color: #d77506;
+  animation: hash-rotate 1.5s infinite linear, hash-color 3.5s infinite linear;
+}
+
+@keyframes hash-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hash-color {
+  0%,
+  100% {
+    background-color: #3ec0f7;
+  }
+  50% {
+    background-color: #cb81f6;
+  }
+}
