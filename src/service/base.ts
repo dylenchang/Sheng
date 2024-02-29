@@ -13,7 +13,7 @@ const ContentType = {
 
 const baseOptions = {
   method: "GET",
-  mode: "no-cors",
+  mode: "cors",
   credentials: "include", // always send cookies、HTTP Basic authentication.
   headers: new Headers({
     "Content-Type": ContentType.json,
@@ -97,11 +97,8 @@ const baseFetch = <T>(
   if (deleteContentType) {
     options.headers.delete("Content-Type");
   } else {
-    debugger;
     const contentType = options.headers.get("Content-Type");
-    if (!contentType) {
-      options.headers.set("Content-Type", ContentType.json);
-    }
+    if (!contentType) options.headers.set("Content-Type", ContentType.json);
   }
 
   const urlPrefix = isPublicAPI ? PUBLIC_API_PREFIX : API_PREFIX;

@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.23.9",
     "@floating-ui/react": "^0.26.8",
     "@formatjs/intl-localematcher": "^0.5.4",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
+    "@mdx-js/loader": "^3.0.1",
+    "@next/mdx": "^14.1.0",
     "@tailwindcss/typography": "^0.5.10",
     "classnames": "^2.5.1",
     "i18next": "^23.8.0",
     "i18next-resources-to-backend": "^1.2.0",
+    "immer": "^10.0.3",
     "js-cookie": "^3.0.5",
     "negotiator": "^0.6.3",
     "next": "14.1.0",
